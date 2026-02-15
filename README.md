@@ -1,39 +1,75 @@
-# 🚀 Unity Shop - Team Development Guide
+# 🚀 Unity Shop - Team Development Guide (v2.0)
 
 **Repository:** https://github.com/siddiquesakib/Unity-Shop  
 **Team:** Unity-Stack  
-**Team Leader:** Mohammad Siddique Sakib
+**Team Leader:** Mohammad Siddique Sakib  
+**Team Size:** 6 Members
 
 ---
 
 ## 📋 Table of Contents
 
-1. [Initial Setup](#initial-setup)
-2. [Daily Workflow](#daily-workflow)
-3. [Branch Management](#branch-management)
-4. [Commit Conventions](#commit-conventions)
-5. [Code Review Process](#code-review-process)
-6. [Do's and Don'ts](#dos-and-donts)
-7. [Common Commands](#common-commands)
-8. [Troubleshooting](#troubleshooting)
-9. [Emergency Procedures](#emergency-procedures)
+1. [Branching Strategy](#branching-strategy)
+2. [Initial Setup](#initial-setup)
+3. [Daily Workflow](#daily-workflow)
+4. [Working on Your Branch](#working-on-your-branch)
+5. [Merging to Develop](#merging-to-develop)
+6. [Release Process](#release-process)
+7. [Commit Conventions](#commit-conventions)
+8. [Do's and Don'ts](#dos-and-donts)
+9. [Common Commands](#common-commands)
+10. [Troubleshooting](#troubleshooting)
+
+---
+
+## 🌿 Branching Strategy
+
+### Our Branch Structure
+
+```
+main (production-ready code - PROTECTED, NO DIRECT PUSH)
+  ↑
+develop (integration & testing - merge here before main)
+  ↑
+  ├── member-1 (Team Member 1's work)
+  ├── member-2 (Team Member 2's work)
+  ├── member-3 (Team Member 3's work)
+  ├── member-4 (Team Member 4's work)
+  ├── member-5 (Team Member 5's work)
+  └── member-6 (Team Member 6's work)
+```
+
+### Branch Rules
+
+| Branch | Purpose | Who Can Push | Merge From | Merge To |
+|--------|---------|--------------|------------|----------|
+| **main** | Production code | ❌ NOBODY (Team Leader only via PR) | develop | - |
+| **develop** | Integration & testing | ✅ All members via PR | member-* branches | main |
+| **member-1 to member-6** | Individual work | ✅ Assigned member only | develop | develop |
+
+### Key Principles
+
+1. **NEVER push directly to main** - Team leader merges via PR only
+2. **Work on your assigned member branch** - Don't work on other members' branches
+3. **Sync with develop regularly** - Pull develop changes to stay updated
+4. **Merge to develop when feature is ready** - Create PR for code review
+5. **Test before merging** - Make sure your code works
 
 ---
 
 ## 🎯 Initial Setup (First Time Only)
 
-### Step 1: Install Prerequisites
+### Step 1: Identify Your Member Branch
 
-```bash
-# Check Node.js version (should be 18+)
-node --version
+**Ask your team leader which branch is assigned to you:**
+- member-1
+- member-2
+- member-3
+- member-4
+- member-5
+- member-6
 
-# Check npm version
-npm --version
-
-# Check Git version
-git --version
-```
+Let's assume you're assigned **member-3** for this guide.
 
 ### Step 2: Clone the Repository
 
@@ -48,24 +84,55 @@ cd Unity-Shop
 git remote -v
 ```
 
-### Step 3: Install Dependencies
+### Step 3: Fetch All Branches
+
+```bash
+# Fetch all branches from remote
+git fetch origin
+
+# View all available branches
+git branch -a
+
+# You should see:
+# * main
+#   remotes/origin/main
+#   remotes/origin/develop
+#   remotes/origin/member-1
+#   remotes/origin/member-2
+#   remotes/origin/member-3
+#   remotes/origin/member-4
+#   remotes/origin/member-5
+#   remotes/origin/member-6
+```
+
+### Step 4: Checkout Your Assigned Branch
+
+```bash
+# Checkout your assigned member branch (example: member-3)
+git checkout member-3
+
+# Verify you're on the correct branch
+git branch
+# Output: * member-3
+
+# Pull latest changes
+git pull origin member-3
+```
+
+### Step 5: Install Dependencies
 
 ```bash
 # Install all project dependencies
 npm install
-
-# Or if using yarn
-yarn install
 ```
 
-### Step 4: Set Up Environment Variables
+### Step 6: Set Up Environment Variables
 
 ```bash
 # Copy the example environment file
 cp .env.example .env.local
 
-# Open and configure your local environment
-# Use your preferred editor (VS Code, Nano, Vim, etc.)
+# Open and configure your environment
 code .env.local
 ```
 
@@ -75,11 +142,9 @@ DATABASE_URL="your_database_connection_string"
 NEXTAUTH_SECRET="your_secret_key_here"
 NEXTAUTH_URL="http://localhost:3000"
 NEXT_PUBLIC_API_URL="http://localhost:3000/api"
-
-# Add other project-specific variables
 ```
 
-### Step 5: Database Setup
+### Step 7: Database Setup
 
 ```bash
 # Run database migrations
@@ -88,44 +153,46 @@ npx prisma migrate dev
 # Generate Prisma Client
 npx prisma generate
 
-# (Optional) Seed database with sample data
+# (Optional) Seed database
 npm run seed
 ```
 
-### Step 6: Verify Installation
+### Step 8: Verify Installation
 
 ```bash
 # Start development server
 npm run dev
 
-# Open browser and check
-# http://localhost:3000
+# Open browser at http://localhost:3000
 ```
 
 ---
 
 ## 📅 Daily Workflow
 
-### Starting Your Work Day
+### 🌅 Starting Your Work Day
 
 ```bash
 # 1. Navigate to project directory
 cd Unity-Shop
 
-# 2. Make sure you're on the main branch
-git checkout main
+# 2. Make sure you're on YOUR member branch
+git checkout member-3
+# Replace member-3 with your assigned branch
 
-# 3. Pull the latest changes
-git pull origin main
+# 3. Pull latest changes from YOUR branch
+git pull origin member-3
 
-# 4. Check current status
+# 4. Sync with develop to get team updates
+git pull origin develop
+
+# 5. Check status
 git status
 
-# 5. Create a new branch for your work
-git checkout -b feature/your-feature-name
+# Now you're ready to start coding! 🎉
 ```
 
-### During Development
+### 💻 During Development
 
 ```bash
 # Check what files you've modified
@@ -137,106 +204,189 @@ git diff
 # Stage specific files
 git add path/to/file.js
 
-# Or stage all changes (use carefully!)
+# Or stage all changes
 git add .
 
 # Commit your changes
-git commit -m "feat: add user authentication module"
+git commit -m "feat: add user authentication"
 
-# Push your branch to remote
-git push origin feature/your-feature-name
+# Push to YOUR member branch
+git push origin member-3
 ```
 
-### Before Ending Your Day
+### 🌙 Before Ending Your Day
 
 ```bash
 # 1. Make sure all changes are committed
 git status
 
-# 2. Push your latest work
-git push origin feature/your-feature-name
+# 2. Push your work to YOUR branch
+git push origin member-3
 
-# 3. Update your local main branch
-git checkout main
-git pull origin main
+# 3. (Optional) Pull latest develop changes
+git pull origin develop
 
-# 4. Go back to your feature branch
-git checkout feature/your-feature-name
+# Good night! 😊
 ```
 
 ---
 
-## 🌿 Branch Management
+## 🔨 Working on Your Branch
 
-### Branch Naming Convention
-
-```bash
-# Feature branches
-git checkout -b feature/shopping-cart
-git checkout -b feature/user-authentication
-
-# Bug fix branches
-git checkout -b fix/cart-calculation-error
-git checkout -b fix/login-validation
-
-# Hotfix branches (urgent production fixes)
-git checkout -b hotfix/payment-gateway-crash
-
-# Improvement branches
-git checkout -b improve/dashboard-performance
-git checkout -b improve/loading-speed
-
-# Documentation branches
-git checkout -b docs/update-readme
-git checkout -b docs/api-documentation
-```
-
-### Branch Structure
-
-```
-main (production-ready code)
-├── develop (integration branch)
-│   ├── feature/shopping-cart
-│   ├── feature/seller-dashboard
-│   └── feature/analytics
-└── hotfix/critical-bug
-```
-
-### Creating a New Branch
+### Your Member Branch Workflow
 
 ```bash
-# Always create from the latest main
-git checkout main
-git pull origin main
-git checkout -b feature/your-feature-name
-```
+# ALWAYS work on your assigned branch
+git checkout member-3
 
-### Merging Branches
+# Pull latest from YOUR branch
+git pull origin member-3
 
-```bash
-# Update your feature branch with latest main
-git checkout feature/your-feature-name
-git pull origin main
+# Write code, make changes...
 
-# If there are conflicts, resolve them, then:
+# Stage changes
 git add .
-git commit -m "fix: resolve merge conflicts"
+
+# Commit with clear message
+git commit -m "feat: implement shopping cart functionality"
+
+# Push to YOUR branch
+git push origin member-3
+```
+
+### Syncing with Team Changes (from develop)
+
+```bash
+# Make sure you're on your branch
+git checkout member-3
+
+# Pull latest team changes from develop
+git pull origin develop
+
+# If there are conflicts, resolve them
+# Then commit the merge
+git add .
+git commit -m "merge: sync with develop branch"
 
 # Push updated branch
-git push origin feature/your-feature-name
+git push origin member-3
 ```
 
-### Deleting Branches
+### Creating Feature Sub-branches (Optional)
+
+If you want to organize your work into smaller features:
 
 ```bash
-# Delete local branch (after merge)
-git branch -d feature/your-feature-name
+# Create feature branch from your member branch
+git checkout member-3
+git checkout -b member-3/shopping-cart
 
-# Force delete (if not merged)
-git branch -D feature/your-feature-name
+# Work on feature
+# ... code ...
 
-# Delete remote branch
-git push origin --delete feature/your-feature-name
+# Commit changes
+git add .
+git commit -m "feat: add shopping cart UI"
+
+# When done, merge back to your member branch
+git checkout member-3
+git merge member-3/shopping-cart
+
+# Push to your member branch
+git push origin member-3
+
+# Delete feature sub-branch
+git branch -d member-3/shopping-cart
+```
+
+---
+
+## 🔄 Merging to Develop
+
+### When to Merge to Develop
+
+✅ Merge when:
+- You completed a feature
+- Your code is tested and working
+- No console errors or warnings
+- Ready for team integration
+
+### Step-by-Step Merge Process
+
+#### Option 1: Using Pull Request (RECOMMENDED)
+
+```bash
+# 1. Make sure your work is committed and pushed
+git checkout member-3
+git add .
+git commit -m "feat: complete user profile feature"
+git push origin member-3
+
+# 2. Go to GitHub: https://github.com/siddiquesakib/Unity-Shop
+# 3. Click "Pull requests" tab
+# 4. Click "New pull request"
+# 5. Set:
+#    - base: develop
+#    - compare: member-3 (your branch)
+# 6. Fill in PR details:
+#    Title: "feat: Add user profile feature"
+#    Description: What you built, how to test it
+# 7. Create pull request
+# 8. Request review from team leader
+# 9. Wait for approval and merge
+```
+
+#### Option 2: Direct Merge (Only if team agrees)
+
+```bash
+# 1. Sync your branch with develop first
+git checkout member-3
+git pull origin develop
+
+# 2. Resolve any conflicts if they exist
+# 3. Push resolved version
+git push origin member-3
+
+# 4. Switch to develop branch
+git checkout develop
+
+# 5. Pull latest develop
+git pull origin develop
+
+# 6. Merge your branch into develop
+git merge member-3
+
+# 7. Test that everything works
+npm run dev
+
+# 8. Push to develop
+git push origin develop
+
+# 9. Switch back to your branch
+git checkout member-3
+```
+
+---
+
+## 🚀 Release Process (Team Leader Only)
+
+### Merging Develop to Main
+
+```bash
+# Team leader only!
+
+# 1. Ensure all member branches are merged to develop
+# 2. Test develop thoroughly
+# 3. Create PR from develop to main
+# 4. Review and approve
+# 5. Merge to main
+# 6. Tag release
+
+git checkout main
+git pull origin main
+git merge develop
+git tag -a v1.0.0 -m "Release version 1.0.0"
+git push origin main --tags
 ```
 
 ---
@@ -247,331 +397,171 @@ git push origin --delete feature/your-feature-name
 
 ```
 <type>(<scope>): <subject>
-
-<body>
-
-<footer>
 ```
 
 ### Commit Types
 
-| Type | Description | Example |
-|------|-------------|---------|
-| `feat` | New feature | `feat: add product filter functionality` |
-| `fix` | Bug fix | `fix: resolve cart total calculation error` |
-| `docs` | Documentation | `docs: update API documentation` |
-| `style` | Code style (formatting) | `style: format code with prettier` |
-| `refactor` | Code refactoring | `refactor: optimize database queries` |
-| `test` | Adding tests | `test: add unit tests for cart module` |
-| `chore` | Maintenance tasks | `chore: update dependencies` |
-| `perf` | Performance improvement | `perf: optimize image loading` |
+| Type | Usage | Example |
+|------|-------|---------|
+| `feat` | New feature | `feat: add product search` |
+| `fix` | Bug fix | `fix: resolve cart calculation error` |
+| `style` | Formatting | `style: format code with prettier` |
+| `refactor` | Code improvement | `refactor: optimize query performance` |
+| `test` | Adding tests | `test: add cart unit tests` |
+| `docs` | Documentation | `docs: update README` |
+| `chore` | Maintenance | `chore: update dependencies` |
 
 ### Good Commit Examples
 
 ```bash
-# ✅ Good commits
-git commit -m "feat: add seller registration form"
-git commit -m "fix: resolve checkout payment validation bug"
-git commit -m "docs: update installation instructions"
+# ✅ GOOD
+git commit -m "feat: implement user authentication system"
+git commit -m "fix: resolve checkout payment bug"
 git commit -m "refactor: improve product search algorithm"
-git commit -m "perf: optimize database queries for dashboard"
+git commit -m "docs: add API documentation"
 
-# ❌ Bad commits
+# ❌ BAD
 git commit -m "update"
-git commit -m "fix bug"
+git commit -m "fix"
 git commit -m "changes"
-git commit -m "asdfasdf"
-git commit -m "final version"
-```
-
-### Detailed Commit Example
-
-```bash
-git commit -m "feat(auth): implement JWT authentication system
-
-- Add JWT token generation and validation
-- Create secure authentication middleware
-- Implement refresh token mechanism
-- Add password hashing with bcrypt
-
-Closes #123"
-```
-
----
-
-## 👀 Code Review Process
-
-### Creating a Pull Request
-
-```bash
-# 1. Push your branch
-git push origin feature/your-feature-name
-
-# 2. Go to GitHub repository
-# 3. Click "Compare & pull request"
-# 4. Fill in the PR template
-```
-
-### Pull Request Template
-
-```markdown
-## Description
-Brief description of changes
-
-## Type of Change
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Breaking change
-- [ ] Documentation update
-
-## Testing
-- [ ] Unit tests pass
-- [ ] Manual testing completed
-- [ ] No console errors
-
-## Screenshots (if applicable)
-Add screenshots here
-
-## Checklist
-- [ ] Code follows project style guidelines
-- [ ] Self-review completed
-- [ ] Comments added for complex logic
-- [ ] Documentation updated
-```
-
-### Reviewing Pull Requests
-
-```bash
-# 1. Fetch the PR branch
-git fetch origin pull/ID/head:BRANCH_NAME
-
-# 2. Checkout the branch
-git checkout BRANCH_NAME
-
-# 3. Test the changes
-npm run dev
-
-# 4. Leave review on GitHub
+git commit -m "done"
 ```
 
 ---
 
 ## ✅ Do's and Don'ts
 
-### ✅ DO's
-
-#### Git Best Practices
+### ✅ MUST DO
 
 ```bash
+# ✅ Always work on YOUR assigned branch
+git checkout member-3
+
 # ✅ Pull before starting work
-git pull origin main
+git pull origin member-3
+git pull origin develop
 
 # ✅ Commit frequently with clear messages
-git commit -m "feat: add product search feature"
+git commit -m "feat: add login form validation"
 
 # ✅ Push your work daily
-git push origin feature/your-feature-name
+git push origin member-3
 
-# ✅ Create feature branches for each task
-git checkout -b feature/task-name
+# ✅ Sync with develop regularly
+git pull origin develop
 
-# ✅ Keep commits small and focused
-git add specific-file.js
-git commit -m "fix: resolve validation error in login form"
-
-# ✅ Update your branch regularly
-git pull origin main
-
-# ✅ Review your changes before committing
-git diff
-```
-
-#### Code Best Practices
-
-```bash
-# ✅ Run tests before committing
-npm run test
-
-# ✅ Lint your code
+# ✅ Test before pushing
+npm run dev
 npm run lint
 
-# ✅ Format code
-npm run format
-
-# ✅ Check for TypeScript errors
-npm run type-check
-
-# ✅ Test locally before pushing
-npm run dev
+# ✅ Ask before merging to develop
+# Create PR or inform team leader
 ```
 
-### ❌ DON'Ts
-
-#### Critical Mistakes to Avoid
+### ❌ NEVER DO
 
 ```bash
-# ❌ NEVER commit to main directly
-# BAD:
-git checkout main
-git commit -m "changes"
-git push origin main
+# ❌ NEVER push to main
+git push origin main  # ⛔ FORBIDDEN
 
-# ❌ NEVER force push to main
-# BAD:
-git push -f origin main
+# ❌ NEVER work on other members' branches
+git checkout member-5  # ⛔ Only if you're member-5
+
+# ❌ NEVER force push to develop
+git push -f origin develop  # ⛔ FORBIDDEN
+
+# ❌ NEVER delete others' work
+git push -f origin member-2  # ⛔ FORBIDDEN
 
 # ❌ NEVER commit sensitive data
-# BAD:
 git add .env
-git add .env.local
-git add config/secrets.js
+git add .env.local  # ⛔ FORBIDDEN
 
 # ❌ NEVER commit node_modules
-# BAD:
-git add node_modules/
+git add node_modules/  # ⛔ FORBIDDEN
 
 # ❌ NEVER use generic commit messages
-# BAD:
-git commit -m "update"
-git commit -m "fix"
-git commit -m "changes"
-
-# ❌ NEVER delete other people's work
-# BAD:
-git push -f origin feature/someone-else-branch
-
-# ❌ NEVER work without pulling first
-# BAD:
-# Start work without: git pull origin main
-```
-
-#### Files to NEVER Commit
-
-```bash
-# These should be in .gitignore
-.env
-.env.local
-.env.production
-node_modules/
-.next/
-dist/
-build/
-*.log
-.DS_Store
-.vscode/
-.idea/
+git commit -m "update"  # ⛔ BAD
+git commit -m "fix"     # ⛔ BAD
 ```
 
 ---
 
 ## 🛠️ Common Commands Reference
 
-### Essential Daily Commands
+### Daily Use Commands
 
 ```bash
-# Check status
+# Check which branch you're on
+git branch
+
+# Check current status
 git status
 
-# View commit history
-git log --oneline
+# View recent commits
+git log --oneline -5
 
-# View recent commits (last 5)
-git log -5
-
-# See changes
+# See what changed
 git diff
 
-# See staged changes
-git diff --staged
-
-# Discard local changes (be careful!)
+# Discard changes in specific file
 git checkout -- filename.js
 
 # Unstage file
 git reset HEAD filename.js
 ```
 
-### Branch Commands
+### Branch Management
 
 ```bash
-# List all branches
+# Switch to your branch
+git checkout member-3
+
+# Switch to develop
+git checkout develop
+
+# View all branches
 git branch -a
 
-# Switch branch
-git checkout branch-name
+# Pull latest from your branch
+git pull origin member-3
 
-# Create and switch to new branch
-git checkout -b new-branch-name
+# Pull latest from develop
+git pull origin develop
 
-# Delete local branch
-git branch -d branch-name
-
-# Rename current branch
-git branch -m new-branch-name
+# Push to your branch
+git push origin member-3
 ```
 
-### Remote Commands
+### Syncing Commands
 
 ```bash
-# View remotes
-git remote -v
-
-# Fetch all remote branches
-git fetch origin
-
-# Pull latest changes
-git pull origin main
-
-# Push branch
-git push origin branch-name
-
-# Push and set upstream
-git push -u origin branch-name
+# Complete sync workflow
+git checkout member-3
+git pull origin member-3
+git pull origin develop
+git add .
+git commit -m "merge: sync with develop"
+git push origin member-3
 ```
 
-### Stashing Commands
+### Stashing (Save Work Temporarily)
 
 ```bash
-# Save work temporarily
+# Save current work
 git stash
 
 # Save with message
-git stash save "work in progress on feature X"
+git stash save "work in progress on cart"
 
-# List stashes
+# View stashed work
 git stash list
 
-# Apply latest stash
-git stash apply
-
-# Apply specific stash
-git stash apply stash@{0}
-
-# Apply and remove stash
+# Restore latest stash
 git stash pop
 
-# Delete stash
-git stash drop stash@{0}
-```
-
-### Undoing Changes
-
-```bash
-# Undo last commit (keep changes)
-git reset --soft HEAD~1
-
-# Undo last commit (discard changes)
-git reset --hard HEAD~1
-
-# Undo specific commit
-git revert commit-hash
-
-# Amend last commit message
-git commit --amend -m "new message"
-
-# Add forgotten file to last commit
-git add forgotten-file.js
-git commit --amend --no-edit
+# Restore specific stash
+git stash apply stash@{0}
 ```
 
 ---
@@ -602,9 +592,6 @@ npm run format
 # Run tests
 npm test
 
-# Run tests in watch mode
-npm test -- --watch
-
 # Type checking
 npm run type-check
 ```
@@ -621,14 +608,11 @@ npx prisma migrate deploy
 # Generate Prisma Client
 npx prisma generate
 
-# Open Prisma Studio
+# Open Prisma Studio (Database GUI)
 npx prisma studio
 
 # Reset database (CAUTION!)
 npx prisma migrate reset
-
-# Seed database
-npm run seed
 ```
 
 ---
@@ -638,156 +622,210 @@ npm run seed
 ### Problem: Merge Conflicts
 
 ```bash
-# 1. Identify conflicting files
+# When you see merge conflict
+
+# 1. Check which files have conflicts
 git status
 
-# 2. Open files and resolve conflicts manually
+# 2. Open conflicting files in editor
 # Look for markers: <<<<<<<, =======, >>>>>>>
 
-# 3. After resolving, stage files
+# 3. Choose which code to keep or combine them
+
+# 4. Remove conflict markers
+
+# 5. Stage resolved files
 git add resolved-file.js
 
-# 4. Complete the merge
-git commit -m "fix: resolve merge conflicts"
+# 6. Complete the merge
+git commit -m "fix: resolve merge conflicts with develop"
 
-# 5. Push changes
-git push origin your-branch-name
+# 7. Push
+git push origin member-3
 ```
 
-### Problem: Accidentally Committed to Wrong Branch
+### Problem: I'm on the Wrong Branch
 
 ```bash
-# 1. Save commit hash
+# Save your current work
+git stash
+
+# Switch to correct branch
+git checkout member-3
+
+# Apply your work
+git stash pop
+```
+
+### Problem: I Need to Undo Last Commit
+
+```bash
+# Undo commit but keep changes
+git reset --soft HEAD~1
+
+# Make corrections
+
+# Commit again
+git add .
+git commit -m "feat: corrected feature implementation"
+```
+
+### Problem: I Accidentally Committed to Wrong Branch
+
+```bash
+# 1. Note the commit hash
 git log -1
 
-# 2. Undo commit (keep changes)
+# 2. Undo the commit (keep changes)
 git reset --soft HEAD~1
 
 # 3. Stash changes
 git stash
 
 # 4. Switch to correct branch
-git checkout correct-branch
+git checkout member-3
 
 # 5. Apply changes
 git stash pop
 
 # 6. Commit to correct branch
 git add .
-git commit -m "your message"
+git commit -m "feat: your feature"
+git push origin member-3
 ```
 
-### Problem: Need to Discard All Local Changes
+### Problem: My Branch is Behind Develop
 
 ```bash
-# WARNING: This will delete all uncommitted changes!
+# Sync with develop
+git checkout member-3
+git pull origin develop
 
-# Discard all changes
-git reset --hard HEAD
+# Resolve any conflicts if needed
 
-# Remove untracked files
-git clean -fd
-
-# Pull latest
-git pull origin main
+# Push updated branch
+git push origin member-3
 ```
 
-### Problem: Accidentally Deleted Files
+### Problem: I Need Team Member's Code
 
 ```bash
-# Restore specific file
-git checkout HEAD -- path/to/file.js
+# Option 1: Wait for them to merge to develop
+git pull origin develop
 
-# Restore all deleted files
-git checkout HEAD -- .
-```
-
-### Problem: Wrong Commit Message
-
-```bash
-# Change last commit message
-git commit --amend -m "corrected message"
-
-# If already pushed (use carefully!)
-git push --force-with-lease origin your-branch-name
-```
-
-### Problem: node_modules Issues
-
-```bash
-# 1. Delete node_modules
-rm -rf node_modules
-
-# 2. Delete package-lock.json
-rm package-lock.json
-
-# 3. Clear npm cache
-npm cache clean --force
-
-# 4. Reinstall
-npm install
+# Option 2: Communicate with team member
+# They should merge their code to develop first
 ```
 
 ### Problem: Port Already in Use
 
 ```bash
-# Find process using port 3000
+# Find and kill process on port 3000
 lsof -i :3000
-
-# Kill the process
 kill -9 PID
 
 # Or use different port
 PORT=3001 npm run dev
 ```
 
+### Problem: node_modules Issues
+
+```bash
+# Clean reinstall
+rm -rf node_modules
+rm package-lock.json
+npm cache clean --force
+npm install
+```
+
 ---
 
-## 🆘 Emergency Procedures
+## 📊 Team Workflow Summary
 
-### Emergency: Pushed Sensitive Data
-
-```bash
-# 1. Remove from latest commit
-git rm --cached .env
-git commit -m "chore: remove sensitive file"
-git push origin branch-name
-
-# 2. Rotate all exposed credentials IMMEDIATELY
-# - Change database passwords
-# - Regenerate API keys
-# - Update JWT secrets
-# - Contact team leader
-
-# 3. For older commits, contact team leader
-# May need to use git filter-branch or BFG Repo-Cleaner
-```
-
-### Emergency: Broke the Main Branch
+### Perfect Day Workflow
 
 ```bash
-# Contact team leader immediately!
-# Don't try to fix it yourself
+# ☀️ Morning (Before starting work)
+cd Unity-Shop
+git checkout member-3
+git pull origin member-3
+git pull origin develop
 
-# Meanwhile, continue work on feature branch
-git checkout -b emergency-fix/your-fix
+# 💻 During Work
+# ... write code ...
+git add .
+git commit -m "feat: implement feature"
+git push origin member-3
+
+# 🌙 Evening (Before leaving)
+git add .
+git commit -m "wip: work in progress"
+git push origin member-3
+
+# 📦 When Feature Complete
+# Create Pull Request to develop
+# Request review from team leader
 ```
 
-### Emergency: Lost Work
+### Weekly Workflow
 
-```bash
-# Check reflog
-git reflog
-
-# Find your lost commit
-# Look for: HEAD@{X}: commit: your message
-
-# Restore it
-git checkout HEAD@{X}
-
-# Create recovery branch
-git checkout -b recovery-branch
 ```
+Monday:
+- Sync with develop
+- Start new feature
+
+Tuesday-Thursday:
+- Work on feature
+- Push daily
+- Sync with develop
+
+Friday:
+- Complete feature
+- Test thoroughly
+- Create PR to develop
+- Code review
+
+Weekend:
+- Team leader merges PRs
+- Reviews develop branch
+```
+
+---
+
+## 🎯 Branch Assignment Reference
+
+Keep track of team member branches:
+
+| Team Member | Branch | Responsibilities |
+|-------------|--------|------------------|
+| Member 1 | member-1 | [Your area] |
+| Member 2 | member-2 | [Your area] |
+| Member 3 | member-3 | [Your area] |
+| Member 4 | member-4 | [Your area] |
+| Member 5 | member-5 | [Your area] |
+| Member 6 | member-6 | [Your area] |
+
+---
+
+## 🔒 Protected Branches Policy
+
+### main Branch
+- 🔒 **Protected**
+- ❌ **No direct pushes**
+- ✅ **Only team leader merges via PR**
+- 📋 **Requires code review**
+- ✅ **Must pass all tests**
+
+### develop Branch
+- ⚠️ **Semi-protected**
+- ✅ **Members can merge via PR**
+- 📋 **Recommended: code review**
+- ✅ **Should be tested before merge**
+
+### member-* Branches
+- 🔓 **Not protected**
+- ✅ **Each member has full access to their own**
+- ❌ **Don't push to others' branches**
 
 ---
 
@@ -797,108 +835,73 @@ git checkout -b recovery-branch
 
 1. ✅ Read error messages carefully
 2. ✅ Check this guide
-3. ✅ Search on Google/Stack Overflow
-4. ✅ Try `git status` to understand current state
+3. ✅ Check which branch you're on: `git branch`
+4. ✅ Check current status: `git status`
 
 ### When Asking for Help
 
-Provide:
-- Exact error message
-- Commands you ran
-- Current branch: `git branch`
-- Current status: `git status`
-- Recent commits: `git log -3`
+**Provide this information:**
+```bash
+# Current branch
+git branch
+
+# Current status
+git status
+
+# Recent commits
+git log -3 --oneline
+
+# Copy the error message
+```
 
 ### Contact
 
 **Team Leader:** Mohammad Siddique Sakib  
-**Communication:** [Your team communication channel]
+**Communication Channel:** [Your team communication]
 
 ---
 
-## 📚 Additional Resources
-
-### Documentation Links
-
-- [Git Documentation](https://git-scm.com/doc)
-- [Next.js Documentation](https://nextjs.org/docs)
-- [React Documentation](https://react.dev/)
-- [Prisma Documentation](https://www.prisma.io/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-
-### Useful Git Commands Cheatsheet
+## 🎓 Quick Reference Card
 
 ```bash
-# Quick reference for most common commands
+# 🌅 Start Day
+git checkout member-3
+git pull origin member-3
+git pull origin develop
 
-# Start work
-git pull origin main
-git checkout -b feature/my-feature
-
-# Save work
+# 💻 Work
 git add .
 git commit -m "feat: description"
-git push origin feature/my-feature
+git push origin member-3
 
-# Update branch
-git pull origin main
+# 🔄 Sync with Team
+git pull origin develop
 
-# Create PR on GitHub
-# Review, test, merge
+# 📦 Finish Feature
+# Go to GitHub
+# Create PR: member-3 → develop
+# Request review
 
-# Clean up
-git checkout main
-git pull origin main
-git branch -d feature/my-feature
-```
-
----
-
-## ✨ Team Workflow Summary
-
-### Perfect Day Workflow
-
-```bash
-# Morning
-cd Unity-Shop
-git checkout main
-git pull origin main
-git checkout -b feature/todays-task
-
-# Development
-# ... write code ...
-npm run dev  # test locally
-npm run lint  # check code quality
-
-# Commit work
-git add .
-git commit -m "feat: implement feature X"
-git push origin feature/todays-task
-
-# Create PR on GitHub
-# Get review
-# Merge after approval
-
-# Evening cleanup
-git checkout main
-git pull origin main
-git branch -d feature/todays-task
+# ❌ NEVER DO
+git push origin main  # ⛔
+git push -f origin develop  # ⛔
+git checkout member-X  # ⛔ (if X is not yours)
 ```
 
 ---
 
 ## 🎯 Key Principles
 
-1. **Never commit directly to main**
-2. **Always pull before starting work**
-3. **Write clear commit messages**
-4. **Test before committing**
-5. **Push work daily**
-6. **Ask for help when stuck**
-7. **Review your own code before PR**
-8. **Respect team members' work**
-9. **Keep branches small and focused**
-10. **Communicate with the team**
+1. **Work on YOUR branch only** (member-X)
+2. **NEVER push to main**
+3. **Sync with develop regularly**
+4. **Push your work daily**
+5. **Use Pull Requests to merge to develop**
+6. **Write clear commit messages**
+7. **Test before merging**
+8. **Communicate with team**
+9. **Ask when in doubt**
+10. **Respect team members' branches**
 
 ---
 
@@ -906,7 +909,686 @@ git branch -d feature/todays-task
 
 ## 🚀 Happy Coding!
 
-**Remember:** When in doubt, ask the team leader!
+**Remember: Your branch = Your responsibility**
+
+**Built with ❤️ by Unity-Stack Team**
+
+---
+
+### Quick Help
+
+**Wrong branch?** → `git checkout member-3`  
+**Need updates?** → `git pull origin develop`  
+**Ready to merge?** → Create PR to develop  
+**Confused?** → Ask team leader  
+
+</div>
+
+# 🚀 Unity Shop - Quick Reference Cheat Sheet
+
+**Repository:** https://github.com/siddiquesakib/Unity-Shop
+
+---
+
+## 📌 Your Daily Commands
+
+### 🌅 Start Your Day
+```bash
+cd Unity-Shop
+git checkout member-X    # Replace X with your number
+git pull origin member-X
+git pull origin develop
+```
+
+### 💻 While Working
+```bash
+git status              # Check what changed
+git add .              # Stage all changes
+git commit -m "feat: description of what you did"
+git push origin member-X
+```
+
+### 🌙 End Your Day
+```bash
+git add .
+git commit -m "wip: work in progress"
+git push origin member-X
+```
+
+---
+
+## 🌿 Branch Structure
+
+```
+main (🔒 PROTECTED - Never push here!)
+  ↑
+develop (⚠️ Merge via PR)
+  ↑
+  ├── member-1
+  ├── member-2
+  ├── member-3
+  ├── member-4
+  ├── member-5
+  └── member-6
+```
+
+**Your branch:** member-X (Replace X with your assigned number)
+
+---
+
+## ✅ DO's
+
+```bash
+✅ git checkout member-X          # Work on YOUR branch
+✅ git pull origin develop         # Sync with team regularly
+✅ git commit -m "feat: feature"   # Clear commit messages
+✅ git push origin member-X        # Push daily
+✅ Create PR to merge to develop   # Use Pull Requests
+```
+
+---
+
+## ❌ DON'Ts
+
+```bash
+❌ git push origin main           # NEVER push to main
+❌ git push -f origin develop     # NEVER force push
+❌ git checkout member-5          # NEVER work on others' branches
+❌ git add .env                   # NEVER commit secrets
+❌ git commit -m "update"         # NEVER use vague messages
+```
+
+---
+
+## 🔄 Sync with Team (Do this daily!)
+
+```bash
+git checkout member-X
+git pull origin develop
+# If conflicts, resolve them
+git add .
+git commit -m "merge: sync with develop"
+git push origin member-X
+```
+
+---
+
+## 📦 Merge to Develop (When feature is ready)
+
+```bash
+# 1. Push your latest work
+git push origin member-X
+
+# 2. Go to GitHub
+https://github.com/siddiquesakib/Unity-Shop
+
+# 3. Create Pull Request:
+   base: develop
+   compare: member-X
+
+# 4. Request review from team leader
+
+# 5. Wait for approval and merge
+```
+
+---
+
+## 🆘 Quick Fixes
+
+### Wrong Branch?
+```bash
+git stash
+git checkout member-X
+git stash pop
+```
+
+### Undo Last Commit?
+```bash
+git reset --soft HEAD~1
+```
+
+### Merge Conflict?
+```bash
+# 1. Open conflicting file
+# 2. Look for: <<<<<<< ======= >>>>>>>
+# 3. Fix the code
+# 4. git add filename
+# 5. git commit -m "fix: resolve conflict"
+```
+
+### Port in Use?
+```bash
+lsof -i :3000
+kill -9 PID
+```
+
+---
+
+## 📝 Commit Message Format
+
+| Type | When to Use | Example |
+|------|-------------|---------|
+| `feat` | New feature | `feat: add login page` |
+| `fix` | Bug fix | `fix: resolve cart bug` |
+| `refactor` | Code improvement | `refactor: optimize queries` |
+| `docs` | Documentation | `docs: update README` |
+| `style` | Formatting | `style: format code` |
+
+---
+
+## 🎯 Remember
+
+1. **YOUR BRANCH = member-X** (Know your number!)
+2. **NEVER touch main branch**
+3. **Sync with develop daily**
+4. **Push your work every day**
+5. **Use PR to merge to develop**
+
+---
+
+## 📞 Need Help?
+
+**Check your status:**
+```bash
+git branch        # Which branch am I on?
+git status        # What files changed?
+```
+
+**Contact:** Mohammad Siddique Sakib (Team Leader)
+
+---
+
+<div align="center">
+
+### Print this and keep it handy! 📄
+
+**Built with ❤️ by Unity-Stack**
+
+</div>
+
+# 🔄 Unity Shop - Git Workflow Diagram
+
+**Team:** Unity-Stack  
+**Repository:** https://github.com/siddiquesakib/Unity-Shop
+
+---
+
+## 📊 Branch Structure Diagram
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                      🔒 main (Production)                     │
+│                   ⛔ NO DIRECT PUSH                           │
+│              Only Team Leader via PR                          │
+└────────────────────────▲─────────────────────────────────────┘
+                         │
+                         │ PR (Code Review Required)
+                         │
+┌────────────────────────┴─────────────────────────────────────┐
+│                    ⚠️ develop (Integration)                   │
+│                  All team changes merge here                  │
+│              Merge via Pull Request (Recommended)             │
+└─┬──────┬──────┬──────┬──────┬──────┬─────────────────────────┘
+  │      │      │      │      │      │
+  │      │      │      │      │      │
+  ▼      ▼      ▼      ▼      ▼      ▼
+┌─────┐┌─────┐┌─────┐┌─────┐┌─────┐┌─────┐
+│mem-1││mem-2││mem-3││mem-4││mem-5││mem-6│  ← 👥 Individual Work
+└─────┘└─────┘└─────┘└─────┘└─────┘└─────┘
+Each member works on their own branch
+```
+
+---
+
+## 🔄 Daily Workflow
+
+### Individual Member Workflow
+
+```
+      ┌──────────────────┐
+      │  Start Your Day  │
+      └────────┬─────────┘
+               │
+               ▼
+      ┌──────────────────┐
+      │  git checkout    │
+      │    member-X      │
+      └────────┬─────────┘
+               │
+               ▼
+      ┌──────────────────┐
+      │  git pull origin │
+      │    member-X      │
+      └────────┬─────────┘
+               │
+               ▼
+      ┌──────────────────┐
+      │  git pull origin │
+      │     develop      │
+      └────────┬─────────┘
+               │
+               ▼
+      ┌──────────────────┐
+      │   Write Code 💻  │
+      │   Test Locally   │
+      └────────┬─────────┘
+               │
+               ▼
+      ┌──────────────────┐
+      │   git add .      │
+      └────────┬─────────┘
+               │
+               ▼
+      ┌──────────────────┐
+      │   git commit -m  │
+      │  "feat: ..."     │
+      └────────┬─────────┘
+               │
+               ▼
+      ┌──────────────────┐
+      │  git push origin │
+      │    member-X      │
+      └────────┬─────────┘
+               │
+               ▼
+      ┌──────────────────┐
+      │   End Your Day   │
+      └──────────────────┘
+```
+
+---
+
+## 🔀 Merge to Develop Process
+
+### When Feature is Complete
+
+```
+┌─────────────────────────────────────────────┐
+│  Your Branch (member-X)                     │
+│  Feature Complete ✅                        │
+└───────────────────┬─────────────────────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │  Push Latest Changes │
+         │  git push origin     │
+         │     member-X         │
+         └──────────┬───────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │   Go to GitHub       │
+         │   Create Pull Request│
+         └──────────┬───────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │   PR Configuration   │
+         │   base: develop      │
+         │   compare: member-X  │
+         └──────────┬───────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │  Request Review      │
+         │  from Team Leader    │
+         └──────────┬───────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │   Team Leader        │
+         │   Reviews Code       │
+         └──────────┬───────────┘
+                    │
+         ┌──────────┴──────────┐
+         │                     │
+         ▼                     ▼
+   ┌─────────┐          ┌─────────┐
+   │Request  │          │Approved │
+   │Changes  │          │   ✅    │
+   └────┬────┘          └────┬────┘
+        │                    │
+        │                    ▼
+        │          ┌──────────────────┐
+        │          │  Merge to develop│
+        │          └──────────┬───────┘
+        │                     │
+        │                     ▼
+        │          ┌──────────────────┐
+        │          │   develop updated│
+        │          │   with your work │
+        │          └──────────────────┘
+        │
+        └──────► Fix issues, push again
+```
+
+---
+
+## 🔄 Syncing with Team Changes
+
+### Keeping Your Branch Updated
+
+```
+  Your Branch (member-X)
+         │
+         │  Daily Sync
+         │
+         ▼
+  ┌──────────────────┐
+  │  git pull origin │
+  │     develop      │
+  └────────┬─────────┘
+           │
+     ┌─────┴──────┐
+     │            │
+     ▼            ▼
+  No Conflict   Conflict!
+     │            │
+     │            ▼
+     │     ┌──────────────┐
+     │     │  Resolve     │
+     │     │  Conflicts   │
+     │     └──────┬───────┘
+     │            │
+     │            ▼
+     │     ┌──────────────┐
+     │     │  git add .   │
+     │     │  git commit  │
+     │     └──────┬───────┘
+     │            │
+     └────────────┴────────┐
+                           │
+                           ▼
+                  ┌──────────────┐
+                  │  git push    │
+                  │  origin      │
+                  │  member-X    │
+                  └──────────────┘
+```
+
+---
+
+## 🚀 Release Process (Team Leader Only)
+
+### Develop → Main Deployment
+
+```
+┌──────────────────────────────────────────┐
+│  All Features Merged to develop          │
+└───────────────────┬──────────────────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │  Test develop branch │
+         │  Thoroughly          │
+         └──────────┬───────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │  Create PR           │
+         │  develop → main      │
+         └──────────┬───────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │  Code Review         │
+         │  Final Testing       │
+         └──────────┬───────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │  Merge to main       │
+         └──────────┬───────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │  Create Release Tag  │
+         │  v1.0.0              │
+         └──────────┬───────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │  Deploy to Production│
+         └──────────────────────┘
+```
+
+---
+
+## 📅 Weekly Timeline Example
+
+```
+Monday          Tuesday-Thursday         Friday
+  │                    │                   │
+  ▼                    ▼                   ▼
+┌──────┐         ┌──────────┐       ┌──────────┐
+│Sync  │         │  Develop │       │ Create   │
+│with  │──────►  │  Feature │──────►│ PR to    │
+│Team  │         │  & Push  │       │ develop  │
+└──────┘         └──────────┘       └────┬─────┘
+                                          │
+                                          ▼
+                                    ┌──────────┐
+                                    │Code      │
+                                    │Review    │
+                                    └────┬─────┘
+                                         │
+  Weekend                                │
+     │                                   │
+     ▼                                   │
+┌──────────┐                            │
+│Team Lead │◄───────────────────────────┘
+│Merges to │
+│ develop  │
+└──────────┘
+```
+
+---
+
+## 🎯 Key Rules Visualized
+
+### ✅ CORRECT Workflow
+
+```
+member-X ──PR──► develop ──PR──► main
+   │                │
+   │                │
+  You           Team Work    Production
+  Work          Integration
+```
+
+### ❌ WRONG Workflows
+
+```
+❌ DON'T DO THIS:
+
+member-X ──DIRECT PUSH──► main
+(NEVER PUSH DIRECTLY TO MAIN!)
+
+member-X ──DIRECT PUSH──► member-Y
+(DON'T WORK ON OTHER'S BRANCHES!)
+
+member-X ──FORCE PUSH──► develop
+(NO FORCE PUSHING!)
+```
+
+---
+
+## 🔄 Conflict Resolution Flow
+
+```
+         Pull from develop
+                │
+                ▼
+         ┌─────────────┐
+         │  Conflict?  │
+         └──────┬──────┘
+                │
+        ┌───────┴───────┐
+        │               │
+        ▼               ▼
+     ┌────┐         ┌─────┐
+     │ NO │         │ YES │
+     └─┬──┘         └──┬──┘
+       │               │
+       │               ▼
+       │        ┌────────────────┐
+       │        │  Open file     │
+       │        │  Find markers: │
+       │        │  <<<<<<<       │
+       │        │  =======       │
+       │        │  >>>>>>>       │
+       │        └───────┬────────┘
+       │                │
+       │                ▼
+       │        ┌────────────────┐
+       │        │  Choose code   │
+       │        │  to keep or    │
+       │        │  combine both  │
+       │        └───────┬────────┘
+       │                │
+       │                ▼
+       │        ┌────────────────┐
+       │        │  Remove markers│
+       │        └───────┬────────┘
+       │                │
+       │                ▼
+       │        ┌────────────────┐
+       │        │  git add file  │
+       │        └───────┬────────┘
+       │                │
+       │                ▼
+       │        ┌────────────────┐
+       │        │  git commit    │
+       │        │  "fix: resolve │
+       │        │   conflict"    │
+       │        └───────┬────────┘
+       │                │
+       └────────────────┴─────────┐
+                                  │
+                                  ▼
+                           ┌─────────────┐
+                           │  git push   │
+                           │  origin     │
+                           │  member-X   │
+                           └─────────────┘
+```
+
+---
+
+## 💡 Pro Tips
+
+### When to Sync with Develop
+
+```
+📅 Frequency: DAILY
+
+Best Times:
+┌──────────────────────────────────────┐
+│  ☀️ Morning (Start of day)           │
+│  🍽️ After lunch                      │
+│  🌙 Before ending work               │
+└──────────────────────────────────────┘
+
+Why?
+- Get latest team changes
+- Avoid big conflicts later
+- Stay in sync with team
+```
+
+### When to Create PR
+
+```
+✅ Create PR when:
+├─ Feature is complete
+├─ Code is tested
+├─ No console errors
+└─ Ready for review
+
+❌ Don't create PR when:
+├─ Work in progress
+├─ Code not tested
+├─ Known bugs exist
+└─ Not ready for review
+```
+
+---
+
+## 🆘 Emergency Scenarios
+
+### Scenario 1: Accidentally on Wrong Branch
+
+```
+❌ You're on member-5 but you're member-3
+
+1. git stash              (Save work)
+2. git checkout member-3  (Correct branch)
+3. git stash pop         (Restore work)
+4. Continue working ✅
+```
+
+### Scenario 2: Committed to Wrong Branch
+
+```
+❌ Committed to develop instead of member-3
+
+1. git log -1            (Note commit hash)
+2. git reset --soft HEAD~1  (Undo commit)
+3. git stash             (Save changes)
+4. git checkout member-3  (Correct branch)
+5. git stash pop         (Restore changes)
+6. git add .
+7. git commit -m "..."
+8. git push origin member-3 ✅
+```
+
+### Scenario 3: Deleted Important Code
+
+```
+❌ Accidentally deleted code
+
+If not committed yet:
+1. git checkout -- filename  (Restore file)
+
+If committed:
+1. git log --oneline        (Find commit)
+2. git checkout HASH filename  (Restore)
+
+If pushed:
+Contact team leader immediately! 🆘
+```
+
+---
+
+## 🎯 Summary: Your Responsibilities
+
+```
+┌────────────────────────────────────────┐
+│  YOUR Branch (member-X)                │
+├────────────────────────────────────────┤
+│  ✅ Work here daily                    │
+│  ✅ Push changes regularly             │
+│  ✅ Sync with develop                  │
+│  ✅ Test your code                     │
+│  ✅ Write clear commits                │
+│  ✅ Create PRs when ready              │
+└────────────────────────────────────────┘
+
+┌────────────────────────────────────────┐
+│  DON'T Touch                           │
+├────────────────────────────────────────┤
+│  ❌ main branch                        │
+│  ❌ Other members' branches            │
+│  ❌ Force push anywhere                │
+└────────────────────────────────────────┘
+```
+
+---
+
+<div align="center">
+
+## 📚 Keep This Diagram Handy!
+
+**For questions, contact Team Leader**
 
 **Built with ❤️ by Unity-Stack Team**
 
